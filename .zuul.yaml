@@ -1,0 +1,14 @@
+- job:
+    name: generate-test-images
+    parent: tox
+    description: |
+      Build sample images with "tox"
+    vars:
+      tox_envlist: generate
+- project:
+    check:
+      jobs:
+        - generate-test-images
+    gate:
+      jobs:
+        - generate-test-images

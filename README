@@ -1,0 +1,10 @@
+This repo contains instructions and scripts for a variety of sample image
+formats. The images are described in manifest.yaml and generated using the
+generate.py script.
+
+Usage:
+```
+$ tox -e generate
+```
+
+Images will (by default) be created in `images/`.

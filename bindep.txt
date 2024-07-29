@@ -1,0 +1,5 @@
+mkisofs [platform:rpm]
+genisoimage [platform:dpkg]
+parted
+qemu-img [platform:rpm]
+qemu-utils [platform:dpkg]
