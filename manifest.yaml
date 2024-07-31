@@ -23,17 +23,17 @@ images:
     format: qcow2
     usable: true
     insecure: false
-    generated_by: |
-      qemu-img create -f qcow2 %(filename)s 10M
-    description: |
+    generated_by:
+      - qemu-img create -f qcow2 %(filename)s 10M
+    description: >-
       This is a standard blank qcow2 file without any external linkage
   - name: qcow-with-backing
     format: qcow2
     usable: false
     insecure: true
-    generated_by: |
-      qemu-img create -f qcow2 -F raw -b /etc/hosts %(filename)s 10M
-    description: |
+    generated_by:
+      - qemu-img create -f qcow2 -F raw -b /etc/hosts %(filename)s 10M
+    description: >-
       This is a qcow2 file with a backing file, which can be manipulated to
       expose files on a host machine if processed without checking what file
       is being included.
@@ -41,10 +41,10 @@ images:
     format: qcow2
     usable: false
     insecure: true
-    generated_by: |
-      qemu-img create -f qcow2 -o data_file=qcow-data-file,data_file_raw=on %(filename)s 10M
-      rm qcow-data-file
-    description: |
+    generated_by:
+      - qemu-img create -f qcow2 -o data_file=qcow-data-file,data_file_raw=on %(filename)s 10M
+      - rm qcow-data-file
+    description: >-
       This is a qcow2 file with a data-file specified, which can both
       reference external data like backing-file or embed a QMP JSON
       specification for a more complex storage arrangement and do much more
@@ -53,59 +53,59 @@ images:
     format: raw
     usable: true
     insecure: false
-    generated_by: |
-      qemu-img create -f raw %(filename)s 1M
-    description: |
+    generated_by:
+      - qemu-img create -f raw %(filename)s 1M
+    description: >-
       A truly unformatted file, which should not match any other format. Since
       qemu-img is used here, it's literally a file of zero bytes.
   - name: gpt-blank
     format: gpt
     usable: true
     insecure: false
-    generated_by: |
-      qemu-img create -f raw %(filename)s 1M
-      parted %(filename)s --script 'mklabel gpt'
-    description: |
+    generated_by:
+      - qemu-img create -f raw %(filename)s 1M
+      - parted %(filename)s --script 'mklabel gpt'
+    description: >-
       An image of a whole disk commonly seen in the PC/x86 space, with a
       protective MBR and GPT paritition table.
   - name: standard
     format: qed
     usable: false
     insecure: false
-    generated_by: |
-      qemu-img create -f qed %(filename)s 10M
-    description: |
+    generated_by:
+      - qemu-img create -f qed %(filename)s 10M
+    description: >-
       A blank QED formatted image, similar to qcow, but should not be supported
       by any service.
   - name: standard-iso9660
     format: iso
     usable: true
     insecure: false
-    generated_by: |
-      qemu-img create -f raw %(filename)s 1M
-      mkisofs -V %(name)s -o %(filename)s /etc/hosts
-    description: |
+    generated_by:
+      - qemu-img create -f raw %(filename)s 1M
+      - mkisofs -V %(name)s -o %(filename)s /etc/hosts
+    description: >-
       An ISO9660 image with a single file inside
   - name: standard-udf
     format: iso
     usable: true
     insecure: false
-    generated_by: |
-      qemu-img create -f raw %(filename)s 1M
-      mkisofs -udf -V %(name)s -o %(filename)s /etc/hosts
-    description: |
+    generated_by:
+      - qemu-img create -f raw %(filename)s 1M
+      - mkisofs -udf -V %(name)s -o %(filename)s /etc/hosts
+    description: >-
       A UDF filesystem (similar to ISO9660) with a single file inside
   - name: iso-with-qcow2-in-system
     format: iso
     usable: false
     insecure: true
-    generated_by: |
-      qemu-img create -f raw %(filename)s 1M
-      mkisofs -udf -V %(name)s -o %(filename)s /etc/hosts
-      qemu-img create -f qcow2 tmp.qcow 10M
-      dd if=tmp.qcow of=%(filename)s bs=32k count=1 conv=notrunc
-      rm tmp.qcow
-    description: |
+    generated_by:
+      - qemu-img create -f raw %(filename)s 1M
+      - mkisofs -udf -V %(name)s -o %(filename)s /etc/hosts
+      - qemu-img create -f qcow2 tmp.qcow 10M
+      - dd if=tmp.qcow of=%(filename)s bs=32k count=1 conv=notrunc
+      - rm tmp.qcow
+    description: >-
       An ISO9660 image with a single file inside, but with a qcow2 header in
       the "system area" which can fool tools (like qemu-img) into thinking it
       is a valid qcow2 file.
@@ -113,28 +113,28 @@ images:
     format: vmdk
     usable: true
     insecure: false
-    generated_by: |
-      qemu-img create -f vmdk -o subformat=monolithicSparse %(filename)s 10M
-    description: |
+    generated_by:
+      - qemu-img create -f vmdk -o subformat=monolithicSparse %(filename)s 10M
+    description: >-
       A VMDK file in monolithicSparse format (i.e. has a sparse header,
       embedded descriptor and extents)
   - name: vmdk-streamOptimized
     format: vmdk
     usable: true
     insecure: false
-    generated_by: |
-      qemu-img create -f vmdk -o subformat=streamOptimized %(filename)s 10M
-    description: |
+    generated_by:
+      - qemu-img create -f vmdk -o subformat=streamOptimized %(filename)s 10M
+    description: >-
       A VMDK file in streamOptimized format, similar to monolithicSparse,
       without a footer.
   - name: vmdk-monolithicFlat
     format: vmdk
     usable: false
     insecure: false
-    generated_by: |
-      qemu-img create -f vmdk -o subformat=monolithicFlat %(filename)s 10M
-      rm %(name)s-flat.vmdk
-    description: |
+    generated_by:
+      - qemu-img create -f vmdk -o subformat=monolithicFlat %(filename)s 10M
+      - rm %(name)s-flat.vmdk
+    description: >-
       A VMDK file in monolithicFlat format, which is actually just a text
       descriptor that references external extent files. Not usable in
       OpenStack and thus should always be rejected by services.
@@ -142,10 +142,10 @@ images:
     format: vmdk
     usable: false
     insecure: true
-    generated_by: |
-      qemu-img create -f vmdk -o subformat=monolithicSparse %(filename)s 10M
-      dd if=%(filename)s bs=512 count=1 skip=1 | sed 's#%(filename)s#/etc/hosts#' | dd of=%(filename)s conv=notrunc seek=1
-    description: |
+    generated_by:
+      - qemu-img create -f vmdk -o subformat=monolithicSparse %(filename)s 10M
+      - dd if=%(filename)s bs=512 count=1 skip=1 | sed 's#%(filename)s#/etc/hosts#' | dd of=%(filename)s conv=notrunc seek=1
+    description: >-
       A monolithicSparse VMDK file that references external extent files. This
       is in an acceptable format, but is insafe as it would result in exposing
       files on a host machine within the guest image.
@@ -154,9 +154,9 @@ images:
     usable: true
     insecure: false
     postprocess: footerify_vmdk
-    generated_by: |
-      qemu-img create -f vmdk -o subformat=monolithicSparse %(filename)s 10M
-    description: |
+    generated_by:
+      - qemu-img create -f vmdk -o subformat=monolithicSparse %(filename)s 10M
+    description: >-
       A VMDK file in monolithicSparse format with a footer that overrides the
       header. This footer must be supported specifically and checked for
       sanity to make sure it does not reference a descriptor or other

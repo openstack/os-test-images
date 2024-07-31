@@ -40,15 +40,17 @@ POSTPROCS = {
 
 
 def generate_one(yamldef, output_dir):
+    yamldef['filename'] = '%s.%s' % (yamldef['name'], yamldef['format'])
     vars = {
         'name': yamldef['name'],
-        'filename': '%s.%s' % (yamldef['name'], yamldef['format']),
+        'filename': yamldef['filename'],
     }
-    cmds = (yamldef['generated_by'] % vars).strip().split('\n')
-    for i, one_cmd in enumerate(cmds):
+    for i, one_cmd in enumerate(yamldef['generated_by']):
         if one_cmd:
+            one_cmd %= vars
             LOG.info('Generating %s step %i/%i with %r',
-                     yamldef['name'], i + 1, len(cmds), one_cmd)
+                     yamldef['name'], i + 1, len(yamldef['generated_by']),
+                     one_cmd)
             try:
                 output = subprocess.check_output(one_cmd, shell=True,
                                                  cwd=output_dir,
@@ -86,13 +88,19 @@ def main():
     with open(args.manifest) as f:
         yamldef = yaml.load(f, Loader=yaml.SafeLoader)
 
+    outyaml = {'images': []}
+
     for image in yamldef['images']:
         if args.only and args.only != image['name']:
             continue
         if 'generated_by' in image:
             generate_one(image, args.output)
+            outyaml['images'].append(image)
         else:
             LOG.error('Unknown source for image %s', image['name'])
+
+    with open(os.path.join(args.output, 'manifest.yaml'), 'w') as f:
+        yaml.dump(outyaml, f)
 
 
 if __name__ == '__main__':
