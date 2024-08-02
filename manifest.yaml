@@ -137,7 +137,21 @@ images:
     description: >-
       A VMDK file in monolithicFlat format, which is actually just a text
       descriptor that references external extent files. Not usable in
-      OpenStack and thus should always be rejected by services.
+      OpenStack because of this external reference, and thus should always be
+      rejected by services.
+  - name: vmdk-monolithicFlat-leak
+    format: vmdk
+    usable: false
+    insecure: true
+    generated_by:
+      - qemu-img create -f vmdk -o subformat=monolithicFlat %(filename)s 10M
+      - sed -i 's#%(name)s-flat.vmdk#/etc/hosts#' %(filename)s
+      - rm %(name)s-flat.vmdk
+    description: >-
+      A VMDK file in monolithicFlat format, which is actually just a text
+      descriptor that references external extent files. This case differs from
+      the one above in that it actually references a file that exists, which
+      can fool a checker into thinking it is valid.
   - name: vmdk-sparse-with-url-backing
     format: vmdk
     usable: false
