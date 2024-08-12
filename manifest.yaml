@@ -18,6 +18,9 @@
 # postprocess: Some symbolic name of a python function in generate.py that
 #              must be run after the generated_by commands (if present) to
 #              finish creation of the image.
+# support_check: Some command to run to determine if OS tooling supports this
+#                format. Only to be used for situations where tooling like
+#                qemu does not support a given format.
 images:
   - name: standard-qcow2v3
     format: qcow2
@@ -77,6 +80,7 @@ images:
     description: >-
       A blank QED formatted image, similar to qcow, but should not be supported
       by any service.
+    support_check: qemu-img -h | grep -q 'Supported.*qed'
   - name: standard-iso9660
     format: iso
     usable: true

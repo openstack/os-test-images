@@ -68,6 +68,14 @@ def generate_one(yamldef, output_dir):
             postproc(os.path.join(output_dir, vars['filename']))
 
 
+def is_supported(yamldef):
+    try:
+        subprocess.check_call(yamldef['support_check'], shell=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        return False
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('manifest')
@@ -92,6 +100,9 @@ def main():
 
     for image in yamldef['images']:
         if args.only and args.only != image['name']:
+            continue
+        if 'support_check' in image and not is_supported(image):
+            LOG.warning('Unable to generate image %s (%s)' % image['name'])
             continue
         if 'generated_by' in image:
             generate_one(image, args.output)
