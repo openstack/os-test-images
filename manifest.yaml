@@ -97,6 +97,7 @@ images:
     generated_by:
       - qemu-img create -f raw %(filename)s 1M
       - mkisofs -udf -V %(name)s -o %(filename)s /etc/hosts
+    support_check: mkisofs -h 2>&1 | grep -iq udf
     description: >-
       A UDF filesystem (similar to ISO9660) with a single file inside
   - name: iso-with-qcow2-in-system
@@ -105,7 +106,7 @@ images:
     insecure: true
     generated_by:
       - qemu-img create -f raw %(filename)s 1M
-      - mkisofs -udf -V %(name)s -o %(filename)s /etc/hosts
+      - mkisofs -V %(name)s -o %(filename)s /etc/hosts
       - qemu-img create -f qcow2 tmp.qcow 10M
       - dd if=tmp.qcow of=%(filename)s bs=32k count=1 conv=notrunc
       - rm tmp.qcow

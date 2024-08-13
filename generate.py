@@ -102,7 +102,8 @@ def main():
         if args.only and args.only != image['name']:
             continue
         if 'support_check' in image and not is_supported(image):
-            LOG.warning('Unable to generate image %s (%s)' % image['name'])
+            LOG.warning('Unable to generate image %s (%s)',
+                        image['name'], image['format'])
             continue
         if 'generated_by' in image:
             generate_one(image, args.output)
