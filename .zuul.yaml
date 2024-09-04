@@ -5,6 +5,7 @@
       Build sample images with "tox"
     vars:
       tox_envlist: generate
+
 - project:
     check:
       jobs:
